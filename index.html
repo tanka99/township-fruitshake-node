@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Township Fruitshake - Lưu Game</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: #0a0401;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  color: #ffefc5;
+  overflow-x: hidden;
+}
+
+.game-container {
+  width: 390px;
+  max-width: 100vw;
+  min-height: 100vh;
+  background: #251508;
+  background-image: 
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 38px),
+    repeating-linear-gradient(0deg, rgba(139,90,43,0.1) 0px, transparent 3px, transparent 24px),
+    linear-gradient(180deg, #3a2415 0%, #1e0f06 100%);
+  box-shadow: 0 0 40px rgba(0,0,0,0.9), inset 0 0 80px rgba(0,0,0,0.5);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-left: 3px solid #5c3d1f;
+  border-right: 3px solid #5c3d1f;
+}
+
+/* TOP BAR */
+.top-bar {
+  background: linear-gradient(180deg, #5a3c20 0%, #3a2512 50%, #221409 100%);
+  border-bottom: 3px solid #8c6e3d;
+  padding: 7px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.7);
+  z-index: 10;
+}
+
+.resources {
+  display: flex;
+  gap: 8px;
+}
+
+.res-item {
+  background: linear-gradient(180deg, #1a0d04 0%, #000000 100%);
+  border: 2px solid #c9a227;
+  border-radius: 20px;
+  padding: 4px 11px;
+  font-weight: 800;
+  color: #ffdc73;
+  text-shadow: 0 1px 0 #5a3c00, 0 0 5px rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 15px;
+  box-shadow: inset 0 1px 2px rgba(255,220,115,0.2), 0 2px 4px rgba(0,0,0,0.8);
+  min-width: 75px;
+}
+
+.res-item .icon {
+  font-size: 16px;
+  filter: drop-shadow(0 1px 1px #000);
+}
+
+.res-item.gold {
+  border-color: #e6b73e;
+}
+
+.res-item.diamond {
+  border-color: #7dd3fc;
+  color: #b8e6ff;
+  text-shadow: 0 1px 0 #003a5a, 0 0 5px rgba(0,100,200,0.5);
+}
+
+.res-item.pop {
+  animation: pop 0.5s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.level-box {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.level {
+  background: radial-gradient(circle at 30% 20%, #ffed9f 0%, #f0c24d 40%, #b8860b 100%);
+  color: #4a2800;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #7a5a1f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  line-height: 1;
+  font-size: 17px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.5);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.level span {
+  font-size: 8px;
+  text-transform: uppercase;
+  margin-top: -2px;
+  font-weight: 700;
+}
+
+.xp-bar {
+  width: 84px;
+  height: 18px;
+  background: #140826;
+  border: 2px solid #5a3b8c;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.9), 0 1px 1px rgba(255,255,255,0.1);
+}
+
+.xp-fill {
+  background: linear-gradient(180deg, #c79aff 0%, #8b4de8 50%, #5a1fb8 100%);
+  height: 100%;
+  border-radius: 7px;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
+  transition: width 0.5s ease;
+}
+
+.xp-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px #000, 0 0 3px #000;
+  letter-spacing: 0.5px;
+}
+
+/* NEWS */
+.news-ticker {
+  background: linear-gradient(180deg, #f9e68b 0%, #e0bb3f 50%, #c99a1e 100%);
+  color: #3a2200;
+  border-top: 1px solid #ffefaa;
+  border-bottom: 2px solid #7a5e1a;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  line-height: 1.3;
+}
+
+/* SCREENS */
+.screen {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+}
+
+.screen.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* MAIN */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 20px;
+  gap: 25px;
+}
+
+.game-title {
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: 32px;
+  color: #ffd86b;
+  text-shadow: 
+    0 2px 0 #8b5a00,
+    0 4px 0 #5a3c00,
+    0 6px 10px rgba(0,0,0,0.9),
+    0 0 20px rgba(255,180,0,0.4);
+  letter-spacing: 1.5px;
+  text-align: center;
+  transform: perspective(300px) rotateX(10deg);
+}
+
+.character-wrap {
+  width: 170px;
+  height: 170px;
+  background: radial-gradient(circle at 50% 40%, #4a3020 0%, #2a1a0f 60%, #120800 100%);
+  border: 4px solid #c9a227;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 10px 25px rgba(0,0,0,0.8),
+    inset 0 0 30px rgba(0,0,0,0.7),
+    inset 0 0 0 3px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.character-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: conic-gradient(from 0deg, transparent, rgba(255,215,100,0.1), transparent);
+  animation: rotate 8s linear infinite;
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+.character-wrap::after {
+  content: "🧑‍🌾";
+  font-size: 95px;
+  filter: drop-shadow(0 5px 4px rgba(0,0,0,0.9));
+  position: relative;
+  z-index: 1;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 270px;
+}
+
+.menu-btn {
+  background: linear-gradient(180deg, #6b8c5e 0%, #4a5f3f 50%, #2d3a26 100%);
+  border: 3px solid #8fb17f;
+  border-bottom-color: #1a2413;
+  border-right-color: #1a2413;
+  color: #fffde8;
+  font-weight: 800;
+  font-size: 17px;
+  padding: 14px;
+  border-radius: 12px;
+  text-shadow: 0 2px 2px #000;
+  box-shadow: 
+    0 5px 0 #1a2413,
+    0 7px 15px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.1s;
+  letter-spacing: 0.3px;
+}
+
+.menu-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #1a2413, 0 3px 8px rgba(0,0,0,0.6);
+}
+
+.menu-btn.gold {
+  background: linear-gradient(180deg, #ffe48a 0%, #e3b23f 50%, #b37f1a 100%);
+  border-color: #fff3b0;
+  border-bottom-color: #7a5310;
+  border-right-color: #7a5310;
+  color: #4a2800;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  box-shadow: 
+    0 5px 0 #7a5310,
+    0 7px 15px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+/* SAVE SCREEN */
+.save-title {
+  color: #ffde7a;
+  text-shadow: 
+    0 2px 0 #8b5e00,
+    0 4px 6px #000,
+    0 0 15px rgba(255,180,0,0.3);
+  font-size: 26px;
+  text-align: center;
+  margin: 22px 15px 18px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.save-form-wrap {
+  background: linear-gradient(180deg, #0f4a25 0%, #0a3018 50%, #05210f 100%);
+  border: 4px solid #c9a227;
+  border-radius: 8px;
+  margin: 0 20px 20px;
+  padding: 20px 18px 18px;
+  box-shadow: 
+    inset 0 0 40px rgba(0,0,0,0.7),
+    0 10px 25px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,220,115,0.2);
+  position: relative;
+}
+
+.save-form-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(201,162,39,0.3);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.form-row {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.form-row label {
+  display: block;
+  color: #ffdc73;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 5px;
+  text-shadow: 0 1px 2px #000, 0 0 5px rgba(0,0,0,0.8);
+  letter-spacing: 0.2px;
+}
+
+.form-row input[type="text"],
+.form-row input[type="password"],
+.form-row input[type="email"] {
+  width: 100%;
+  background: #020d04;
+  border: 2px solid #2a4a30;
+  border-top-color: #0a1a0e;
+  border-left-color: #0a1a0e;
+  border-radius: 5px;
+  padding: 10px 12px;
+  color: #fffde0;
+  font-size: 15px;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.05);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-row input:focus {
+  border-color: #c9a227;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.9), 0 0 0 1px #c9a227, 0 0 10px rgba(201,162,39,0.3);
+}
+
+.form-row input::placeholder {
+  color: #6b8a6f;
+}
+
+.form-row small {
+  display: block;
+  color: #9bc49a;
+  font-size: 11px;
+  margin-top: 4px;
+  text-shadow: 0 1px 1px #000;
+  font-style: italic;
+}
+
+.gender {
+  display: flex;
+  gap: 25px;
+  margin-top: 10px;
+  padding-left: 2px;
+}
+
+.gender label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  color: #e8f5e3;
+  cursor: pointer;
+  margin-bottom: 0;
+  font-size: 15px;
+  text-shadow: 0 1px 2px #000;
+}
+
+.gender input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #c9a227;
+  cursor: pointer;
+}
+
+.btn-save {
+  width: 100%;
+  background: linear-gradient(180deg, #8a9686 0%, #6a7a66 50%, #4a5547 100%);
+  border: 3px solid #2f362c;
+  border-top-color: #b5c1b0;
+  border-left-color: #b5c1b0;
+  color: #f0f7ed;
+  font-weight: 800;
+  font-size: 19px;
+  padding: 11px;
+  border-radius: 7px;
+  text-shadow: 0 2px 2px #000;
+  box-shadow: 
+    0 4px 0 #1f241d,
+    0 6px 12px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+  cursor: pointer;
+  margin-top: 16px;
+  letter-spacing: 0.5px;
+  transition: all 0.1s;
+}
+
+.btn-save:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #1f241d, 0 3px 6px rgba(0,0,0,0.6);
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  color: #ffdc73;
+  text-decoration: none;
+  font-size: 14px;
+  text-shadow: 0 1px 3px #000;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+  color: #fff0b3;
+}
+
+/* FOOTER */
+.footer-links {
+  background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.9) 100%);
+  border-top: 2px solid #5a3c1f;
+  padding: 10px 8px 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #c9a86f;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px #000;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.footer-links a {
+  color: #ffdc73;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 0 3px;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<div class="game-container">
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="resources">
+      <div class="res-item gold">
+        <span class="icon">🪙</span>
+        <span id="gold-count">315</span>
+      </div>
+      <div class="res-item diamond">
+        <span class="icon">💎</span>
+        <span id="diamond-count">300</span>
+      </div>
+    </div>
+    <div class="level-box">
+      <div class="level">1<span>cấp</span></div>
+      <div class="xp-bar">
+        <div class="xp-fill" style="width:81.8%"></div>
+        <span class="xp-text">9/11</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS -->
+  <div class="news-ticker">
+    Tin tức mới: <b>Kết quả giải đấu (từ 01.05.2026)!</b> từ 01 tháng 5 20:00
+  </div>
+
+  <!-- MAIN SCREEN -->
+  <div id="main-screen" class="screen active">
+    <div class="main-content">
+      <h1 class="game-title">TOWNSHIP FRUITSHAKE</h1>
+      <div class="character-wrap"></div>
+      <div class="menu-buttons">
+        <button class="menu-btn">CHƠI NGAY</button>
+        <button class="menu-btn">CỬA HÀNG</button>
+        <button class="menu-btn gold" id="btn-save-game">Lưu game +10 💎</button>
+        <button class="menu-btn">BẠN BÈ</button>
+        <button class="menu-btn">XẾP HẠNG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVE SCREEN -->
+  <div id="save-screen" class="screen">
+    <h2 class="save-title">Lưu game và nhận 10 kim cương!</h2>
+    <div class="save-form-wrap">
+      <form id="save-form">
+        <div class="form-row">
+          <label>Tên đăng nhập</label>
+          <input type="text" id="login" placeholder="Login*" autocomplete="username" required>
+        </div>
+        <div class="form-row">
+          <label>Mật khẩu</label>
+          <input type="password" id="password" placeholder="Password*" autocomplete="new-password" required>
+        </div>
+        <div class="form-row">
+          <label>Email (Không bắt buộc)</label>
+          <input type="email" id="email" placeholder="Email*" autocomplete="email">
+          <small>Nhập email để có thể khôi phục mật khẩu.</small>
+        </div>
+        <div class="form-row gender">
+          <label><input type="radio" name="gender" value="Nam" checked> Nam</label>
+          <label><input type="radio" name="gender" value="Nữ"> Nữ</label>
+        </div>
+        <button type="submit" class="btn-save">Lưu</button>
+        <a href="#" id="back-home" class="back-link">Quay về trang chủ</a>
+      </form>
+    </div>
+    <div style="flex:1"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-links">
+    <a>Diễn đàn</a> | <a>Chat</a> | <a>Tin tức</a>, <a>Thư</a>, <a>Trợ giúp</a> | Online: 1823 | <a>Thoát</a>, <a>Hỗ trợ kỹ thuật</a>
+  </div>
+</div>
+
+<script>
+const goldEl = document.getElementById('gold-count');
+const diamondEl = document.getElementById('diamond-count');
+let gold = 315;
+let diamonds = 300;
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(name + '-screen').classList.add('active');
+}
+
+function loadResources() {
+  gold = parseInt(localStorage.getItem('tf_gold')) || 315;
+  diamonds = parseInt(localStorage.getItem('tf_diamonds')) || 300;
+  goldEl.textContent = gold.toLocaleString('vi-VN');
+  diamondEl.textContent = diamonds.toLocaleString('vi-VN');
+  
+  const saved = localStorage.getItem('tf_user');
+  if (saved) {
+    try {
+      const u = JSON.parse(saved);
+      document.getElementById('login').value = u.username || '';
+      document.getElementById('email').value = u.email || '';
+      if (u.gender) {
+        const radio = document.querySelector(`input[name="gender"][value="${u.gender}"]`);
+        if (radio) radio.checked = true;
+      }
+    } catch(e) {}
+  }
+}
+
+function handleSave(e) {
+  e.preventDefault();
+  const login = document.getElementById('login').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const gender = document.querySelector('input[name="gender"]:checked').value;
+  
+  if (!login || !password) {
+    alert('Vui lòng nhập Tên đăng nhập và Mật khẩu!');
+    return;
+  }
+  
+  const alreadySaved = localStorage.getItem('tf_saved');
+  localStorage.setItem('tf_user', JSON.stringify({username: login, password, email, gender, savedAt: new Date().toISOString()}));
+  
+  if (!alreadySaved) {
+    diamonds += 10;
+    localStorage.setItem('tf_diamonds', diamonds);
+    localStorage.setItem('tf_saved', '1');
+    diamondEl.textContent = diamonds.toLocaleString('vi-VN');
+    diamondEl.parentElement.classList.add('pop');
+    setTimeout(() => diamondEl.parentElement.classList.remove('pop'), 600);
+    alert('Đã lưu! +10 💎');
+  } else {
+    alert('Thông tin đã được cập nhật!');
+  }
+  
+  showScreen('main');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadResources();
+  
+  document.getElementById('btn-save-game').addEventListener('click', () => {
+    showScreen('save');
+  });
+  
+  document.getElementById('back-home').addEventListener('click', (e) => {
+    e.preventDefault();
+    showScreen('main');
+  });
+  
+  document.getElementById('save-form').addEventListener('submit', handleSave);
+  
+  // Other buttons funny feedback
+  document.querySelectorAll('.menu-btn:not(#btn-save-game)').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.style.transform = 'translateY(3px)';
+      setTimeout(() => btn.style.transform = '', 150);
+    });
+  });
+});
+</script>
+</body>
+</html>
