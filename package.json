@@ -16,7 +16,8 @@
     "socket.io": "^4.7.5",
     "express-rate-limit": "^7.2.0",
     "helmet": "^7.1.0",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "lowdb": "^7.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
